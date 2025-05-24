@@ -1,0 +1,535 @@
+
+<!DOCTYPE html>
+
+<html lang="uk">
+<head>
+<style>
+  #listControl {
+    margin: 20px 0;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  #listSelector, #listNameInput, button {
+    font-family: Montserrat, sans-serif;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 2px solid #99c2ff;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    background-color: #e6f0ff;
+    cursor: pointer;
+    transition: 0.2s ease;
+  }
+  #listSelector:hover, #listNameInput:hover, button:hover {
+    background-color: #d0e7ff;
+    transform: scale(1.03);
+  }
+  #listNameInput {
+    min-width: 150px;
+  }
+
+.delete-btn {
+  background-color: #ff4d4d;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 20px;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+.delete-btn:hover {
+  background-color: #ff1a1a;
+  transform: scale(1.05);
+}
+
+.delete-btn:active {
+  transform: scale(0.95);
+}
+
+.edit-btn {
+  background-color: #cce0ff;
+  border: 2px solid #99c2ff;
+  border-radius: 12px;
+  padding: 8px 14px;
+  font-size: 16px;
+  font-family: Montserrat, sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.edit-btn:hover {
+  background-color: #b3d1ff;
+  transform: scale(1.07);
+}
+
+.edit-btn:active {
+  transform: scale(0.95);
+}
+.edit-btn {
+  padding: 6px 14px;
+  font-size: 16px;
+  border: 2px solid #99c2ff;
+  border-radius: 10px;
+  background-color: #cce0ff;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.edit-btn:hover {
+  background-color: #b3d1ff;
+  transform: translateY(-1px);
+}
+
+h1[contenteditable="true"]:hover {
+  outline: 2px dashed #99c2ff;
+  cursor: text;
+}
+
+li {
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<meta charset="utf-8"/>
+<title>Мої завдання</title>
+<style>
+    html, body {
+      margin: 0;
+      height: 100%;
+      font-family: 'Montserrat', sans-serif;
+      background: #e6f0ff;
+    }
+    .split {
+      display: flex;
+      height: 100vh;
+      width: 100%;
+    }
+    .left {
+      flex: 2;
+      padding: 30px;
+      overflow-y: auto;
+    }
+    .right {
+      flex: 1;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #e6f0ff;
+      border-left: 3px solid #99c2ff;
+    }
+    .resizer {
+      width: 5px;
+      cursor: col-resize;
+      background: #99c2ff;
+    }
+    h1 {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      text-align: center;
+    }
+    #taskInput {
+      border: 2px solid #99c2ff;
+      border-radius: 8px;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+      padding: 10px;
+      font-size: 16px;
+      width: 60%;
+    }
+    button {
+      transition: all 0.3s ease;
+
+      border: 2px solid #99c2ff;
+      background-color: #cce0ff;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      padding: 10px;
+      font-size: 16px;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      background: #fff;
+      border: 2px solid #99c2ff;
+      border-radius: 10px;
+      padding: 10px 20px;
+      margin: 10px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.3s;
+      cursor: pointer;
+    }
+    li:hover {
+      background: #d0e3ff;
+    }
+    .completed {
+  background-color: #d0e5ff !important;
+  transition: background-color 0.3s ease;
+}
+}
+
+.completed .delete-btn {
+  opacity: 1;
+}
+      background: #cce0ff !important;
+      
+      
+    }
+    .task-text {
+      font-weight: 700;
+      flex: 1;
+      margin-left: 10px;
+    }
+    .delete-btn {
+      transition: opacity 0.3s ease;
+      background: red;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+      margin-left: 10px;
+      cursor: pointer;
+    }
+    canvas {
+      max-width: 300px;
+      max-height: 300px;
+    }
+    #stats {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  
+    * {
+      font-family: 'Montserrat', sans-serif;
+    }
+    
+    button:hover {
+      background-color: #99c2ff;
+      transform: scale(1.03);
+    }
+
+    button:active {
+      background-color: #6699cc;
+      transform: scale(0.97);
+      color: white;
+    }
+    
+li:hover {
+  background-color: #cce5ff;
+  transition: background-color 0.3s ease;
+}
+
+#taskInput {
+  transition: all 0.3s ease;
+}
+
+#taskInput:hover {
+  border-color: #6699ff;
+  box-shadow: 0 0 6px rgba(100, 150, 255, 0.4);
+}
+
+#taskInput:focus {
+  border-color: #3366cc;
+  box-shadow: 0 0 8px rgba(51, 102, 204, 0.5);
+  outline: none;
+}
+</style>
+</head>
+<body>
+<div class="split">
+<div class="left">
+<div id="listControl" style="margin-bottom: 20px;">
+<select id="listSelector" onchange="switchList()" style="padding: 6px; font-size: 16px; border-radius: 6px;">
+</select>
+<input id="listNameInput" placeholder="Назва списку" style="padding: 6px; font-size: 16px; border-radius: 6px; margin-left: 10px;" type="text"/>
+<button class="edit-btn" onclick="renameList()" title="Змінити назву списку">✏️ Змінити</button>
+<button class="edit-btn" onclick="addNewList()">➕ Новий список</button>
+<button class="edit-btn" onclick="deleteList()">🗑️ Видалити</button></div>
+<h1 contenteditable="true" title="Натисніть, щоб змінити заголовок">📄 Мої завдання</h1>
+<input id="taskInput" onkeydown="if(event.key === 'Enter') addTask()" placeholder="Введіть нове завдання..."/>
+<button onclick="addTask()">Додати</button>
+<ul id="taskList"></ul>
+</div>
+<div class="resizer" id="dragbar"></div>
+<div class="right">
+<canvas id="taskChart"></canvas>
+<div id="stats"></div>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+    function saveTasks() {
+      localStorage.setItem("tasks", JSON.stringify(tasks));
+    }
+
+    function updateChart() {
+      const done = tasks.filter(t => t.completed).length;
+      const left = tasks.length - done;
+      chart.data.datasets[0].data = [done, left];
+      chart.update();
+      document.getElementById("stats").innerText = `${done} з ${tasks.length} виконано`;
+    }
+
+    function renderTasks() {
+      const list = document.getElementById("taskList");
+      list.innerHTML = "";
+      tasks.forEach((task, index) => {
+        const li = document.createElement("li");
+        if (task.completed) li.classList.add("completed");
+
+        li.onclick = () => {
+          tasks[index].completed = !tasks[index].completed;
+          saveTasks();
+          renderTasks();
+        };
+
+        const span = document.createElement("span");
+        span.className = "task-text";
+        span.textContent = task.text;
+
+        const delBtn = document.createElement("button");
+        delBtn.className = "delete-btn";
+        delBtn.textContent = "✖";
+        delBtn.onclick = (e) => {
+          e.stopPropagation();
+          tasks.splice(index, 1);
+          saveTasks();
+          renderTasks();
+        };
+
+        li.appendChild(span);
+        li.appendChild(delBtn);
+        list.appendChild(li);
+      });
+      updateChart();
+    }
+
+    function addTask() {
+      const input = document.getElementById("taskInput");
+      const text = input.value.trim();
+      if (text === "") return;
+      tasks.push({ text, completed: false });
+      input.value = "";
+      saveTasks();
+      renderTasks();
+    }
+
+    const ctx = document.getElementById('taskChart').getContext('2d');
+    const chart = new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: ['Виконано', 'Залишилось'],
+        datasets: [{
+          data: [0, 1],
+          backgroundColor: ['#3399ff', '#99ccff']
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+        tooltip: {
+          backgroundColor: '#1e293b',
+          titleFont: {
+            family: 'Montserrat',
+            size: 14,
+            weight: '700'
+          },
+          bodyFont: {
+            family: 'Montserrat',
+            size: 13
+          },
+          padding: 10,
+          cornerRadius: 8,
+          caretSize: 6,
+          boxPadding: 4,
+          boxWidth: 10,
+          boxHeight: 10,
+          bodyColor: '#ffffff',
+          borderColor: '#ffffff',
+          borderWidth: 0
+        },
+          legend: {
+            position: 'bottom',
+            labels: {
+              color: '#336699',
+              font: {
+                size: 14,
+                family: 'Montserrat',
+                weight: '600'
+              }
+            }
+          }
+        }
+      }
+    });
+
+    renderTasks();
+
+    // Resizer logic
+    const dragbar = document.getElementById("dragbar");
+    const left = dragbar.previousElementSibling;
+    const right = dragbar.nextElementSibling;
+
+    dragbar.onmousedown = function(e) {
+      e.preventDefault();
+      document.onmousemove = function(e) {
+        const percentage = (e.clientX / window.innerWidth) * 100;
+        left.style.flex = percentage;
+        right.style.flex = 100 - percentage;
+      };
+      document.onmouseup = function() {
+        document.onmousemove = null;
+        document.onmouseup = null;
+      };
+    };
+  </script>
+<script>
+function deleteList() {
+  if (Object.keys(allLists).length === 1) {
+    alert("Потрібен хоча б один список.");
+    return;
+  }
+  if (!confirm("Ви впевнені, що хочете видалити цей список?")) return;
+  delete allLists[currentList];
+  currentList = Object.keys(allLists)[0];
+  saveAll();
+  renderListOptions();
+  renderTasks();
+}
+</script></body>
+</html>
+<script>
+let allLists = JSON.parse(localStorage.getItem("lists")) || {
+  "Список 1": []
+};
+let currentList = localStorage.getItem("currentList") || "Список 1";
+
+function saveAll() {
+  localStorage.setItem("lists", JSON.stringify(allLists));
+  localStorage.setItem("currentList", currentList);
+}
+
+function switchList() {
+  currentList = document.getElementById("listSelector").value;
+  renderTasks();
+  updateChart();
+  saveAll();
+  document.getElementById("listNameInput").value = currentList;
+}
+
+function renameList() {
+  const newName = document.getElementById("listNameInput").value.trim();
+  if (!newName || newName === currentList) return;
+  if (allLists[newName]) return alert("Список з такою назвою вже існує.");
+  allLists[newName] = allLists[currentList];
+  delete allLists[currentList];
+  currentList = newName;
+  saveAll();
+  renderListOptions();
+  renderTasks();
+  updateChart();
+}
+
+function addNewList() {
+  let i = 1;
+  let name = "Список " + (Object.keys(allLists).length + 1);
+  while (allLists[name]) {
+    name = "Список " + (++i);
+  }
+  allLists[name] = [];
+  currentList = name;
+  saveAll();
+  renderListOptions();
+  renderTasks();
+  updateChart();
+}
+
+function renderListOptions() {
+  const selector = document.getElementById("listSelector");
+  selector.innerHTML = "";
+  for (let listName in allLists) {
+    const opt = document.createElement("option");
+    opt.value = listName;
+    opt.textContent = listName;
+    if (listName === currentList) opt.selected = true;
+    selector.appendChild(opt);
+  }
+  document.getElementById("listNameInput").value = currentList;
+}
+
+function saveTasks() {
+  allLists[currentList] = tasks;
+  saveAll();
+}
+
+function renderTasks() {
+  tasks = allLists[currentList] || [];
+  const list = document.getElementById("taskList");
+  list.innerHTML = "";
+  tasks.forEach((task, index) => {
+    const li = document.createElement("li");
+    if (task.completed) li.classList.add("completed");
+
+    li.onclick = () => {
+      tasks[index].completed = !task.completed;
+      saveTasks();
+      renderTasks();
+    };
+
+    const span = document.createElement("span");
+    span.className = "task-text";
+    span.textContent = task.text;
+
+    const delBtn = document.createElement("button");
+    delBtn.className = "delete-btn";
+    delBtn.textContent = "✖";
+    delBtn.onclick = (e) => {
+      e.stopPropagation();
+      tasks.splice(index, 1);
+      saveTasks();
+      renderTasks();
+    };
+
+    li.appendChild(span);
+    li.appendChild(delBtn);
+    list.appendChild(li);
+  });
+  updateChart();
+}
+
+function addTask() {
+  const input = document.getElementById("taskInput");
+  const text = input.value.trim();
+  if (text === "") return;
+  tasks.push({ text, completed: false });
+  input.value = "";
+  saveTasks();
+  renderTasks();
+}
+
+renderListOptions();
+renderTasks();
+updateChart();
+</script>
